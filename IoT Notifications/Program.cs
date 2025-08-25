@@ -1,8 +1,6 @@
 using Microsoft.Toolkit.Uwp.Notifications;
 using System.Diagnostics;
-using Windows.ApplicationModel;
 using Windows.UI.Notifications;
-using Windows.UI.ViewManagement.Core;
 
 namespace IoT_Notifications {
     internal static class Program {
@@ -24,7 +22,9 @@ namespace IoT_Notifications {
             ShutdownToken = cts.Token;
 
             // Gather integrations (TODO: Configurable)
-            Integrations.Add("HTTP", new HttpIntegration("HTTP"));
+            Integrations.Add("HTTP", new HttpIntegration("HTTP", new string[] {
+                "F9fcBmQRXZxSZVA6Wg3G5mSjPNtB0s7X"
+            }));
 
             // Build ui
             ToastNotifier = ToastNotificationManagerCompat.CreateToastNotifier();
