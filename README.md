@@ -2,6 +2,8 @@
 
 Very simple application to receive and display notifications for other security camera / homelab / IoT applications.
 
+![Screenshot of an example popup notification.](popup-example.png)
+
 # Why
 
 This project was born from the desire of a simple notification app that was lightweight and fully customizable (and I wanted the practice of building it myself).
