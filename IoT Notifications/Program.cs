@@ -1,15 +1,14 @@
-using Microsoft.Toolkit.Uwp.Notifications;
+using IoT_Notifications.Integrations;
 using System.Diagnostics;
-using Windows.UI.Notifications;
 
 namespace IoT_Notifications {
     internal static class Program {
-        static Dictionary<string, IIntegrationProvider> Integrations = new Dictionary<string, IIntegrationProvider>();
+        static IntegrationCollection? Integrations = null;
 
         public static SynchronizationContext? UISynchronizationContext = null;
         public static CancellationToken ShutdownToken = CancellationToken.None;
 
-        public static ToastNotifierCompat? ToastNotifier = null; // TODO: Abstract away
+        //public static ToastNotifierCompat? ToastNotifier = null; // TODO: Abstract away
         static NotifyIcon? NotifyIcon = null;
 
         [STAThread]
@@ -21,17 +20,26 @@ namespace IoT_Notifications {
             CancellationTokenSource cts = new CancellationTokenSource();
             ShutdownToken = cts.Token;
 
-            // Gather integrations (TODO: Configurable)
-            Integrations.Add("HTTP", new HttpIntegration("HTTP", new string[] {
-                "F9fcBmQRXZxSZVA6Wg3G5mSjPNtB0s7X"
-            }));
+            // Gather integrations (TODO: Configurable from settings form, this is currently test data)
+            if (Properties.Settings.Default.Integrations == null) {
+                Integrations = Properties.Settings.Default.Integrations = new IntegrationCollection();
 
-            // Build ui
-            ToastNotifier = ToastNotificationManagerCompat.CreateToastNotifier();
-            if (ToastNotifier.Setting != NotificationSetting.Enabled) {
-                Trace.WriteLine("Unable to manage toasts");
-                return -1;
+                var testIntegration = new HttpIntegration() {
+                    Name = "HTTP Example"
+                };
+
+                Integrations.Add(testIntegration.Guid, testIntegration);
+                Properties.Settings.Default.Save();
+            } else {
+                Integrations = Properties.Settings.Default.Integrations;
             }
+
+            // Build UI
+            //ToastNotifier = ToastNotificationManagerCompat.CreateToastNotifier();
+            //if (ToastNotifier.Setting != NotificationSetting.Enabled) {
+            //    Trace.WriteLine("Unable to manage toasts");
+            //    return -1;
+            //}
 
             NotifyIcon = new NotifyIcon() {
                 Text = "IoT Notifications",
@@ -72,26 +80,28 @@ namespace IoT_Notifications {
             var menu = new ContextMenuStrip();
             var items = menu.Items;
 
-            foreach (IIntegrationProvider integration in Integrations.Values) {
-                integration.AttachMenuItems(items, shutdownToken);
+            if (Integrations != null && Integrations.Count > 0) {
+                foreach (IIntegration integration in Integrations.Values) {
+                    integration.AttachMenuItems(items, shutdownToken);
+                }
+                items.Add(new ToolStripSeparator());
             }
 
             if (Debugger.IsAttached) {
-                items.Add(new ToolStripSeparator());
                 items.Add(new ToolStripMenuItem("Show test popup...", null, (s, e) => {
                     var notification = new NotificationForm();
                     notification.Show(null);
                 }));
             }
 
+            // TODO: Global silent option
+            items.Add(new ToolStripMenuItem("Settings", null, (s, e) => new SettingsForm().Show()));
+
             items.Add(new ToolStripSeparator());
+
             items.Add(new ToolStripMenuItem("Quit", null, (s, e) => Application.Exit()));
 
             return menu;
-        }
-
-        private static void Console_CancelKeyPress(object? sender, ConsoleCancelEventArgs e) {
-            throw new NotImplementedException();
         }
     }
 }
