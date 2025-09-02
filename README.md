@@ -1,6 +1,6 @@
 ﻿# IoT Notifications
 
-Very simple application to receive and display notifications for other security camera / homelab / IoT applications.
+Very simple application to receive and display notifications for security camera / homelab / IoT applications.
 
 ![Screenshot of an example popup notification.](popup-example.png)
 
