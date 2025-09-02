@@ -22,5 +22,17 @@ namespace IoT_Notifications.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TemporarySetting {
+            get {
+                return ((string)(this["TemporarySetting"]));
+            }
+            set {
+                this["TemporarySetting"] = value;
+            }
+        }
     }
 }

@@ -34,7 +34,7 @@ namespace IoT_Notifications.Integrations {
                 options.ListenAnyIP(9000, listenOptions => {
                     listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                     listenOptions.UseHttps(httpsOptions => {
-                        httpsOptions.ServerCertificate = GenerateCertificate(appName, "192.168.1.200", DateTimeOffset.Now.AddHours(72));
+                        httpsOptions.ServerCertificate = GenerateCertificate(appName, "localhost", DateTimeOffset.Now.AddHours(72));
                     });
                 });
             });
